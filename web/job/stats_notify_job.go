@@ -139,7 +139,7 @@ func (j *StatsNotifyJob) UserLoginNotify(username string, ip string, time string
 
 var numericKeyboard = tgbotapi.NewInlineKeyboardMarkup(
     tgbotapi.NewInlineKeyboardRow(
-        tgbotapi.NewInlineKeyboardButtonData("Get Usage", "get_usage"),
+        tgbotapi.NewInlineKeyboardButtonData("✳️ دریافت اطلاعات اکانت", "get_usage"),
     ),
 )
 
@@ -176,7 +176,7 @@ func (j *StatsNotifyJob) OnReceive() *StatsNotifyJob {
 
 				switch update.CallbackQuery.Data {
 					case "get_usage":
-						msg.Text = "for get your usage send command like this : \n <code>/usage uuid | id</code> \n example : <code>/usage fc3239ed-8f3b-4151-ff51-b183d5182142</code>"
+						msg.Text = "برای دریافت اطلاعات سرویس آیدی V2RAY  خود را وارد نمایید: \n <code>/usage uuid</code> \n بطور مثال : <code>/usage fc3239ed-8151-ff51-b183d5182142</code>"
 						msg.ParseMode = "HTML"
 					}
 				if _, err := bot.Send(msg); err != nil {
@@ -197,15 +197,9 @@ func (j *StatsNotifyJob) OnReceive() *StatsNotifyJob {
 
         // Extract the command from the Message.
         switch update.Message.Command() {
-        case "help":
-            msg.Text = "What you need?"
+        case "/Trafiic":
+            msg.Text = "♻️به بخش مشاهده اطلاعات اشتراک خوش آمدید \n از دکمه زیر برای دریافت اطلاعات اکانت خود استفاده نمایید"
 			msg.ReplyMarkup = numericKeyboard
-        case "start":
-            msg.Text = "Hi :) \n What you need?"
-			msg.ReplyMarkup = numericKeyboard
-
-        case "status":
-            msg.Text = "bot is ok."
 
         case "usage":
             msg.Text = j.getClientUsage(update.Message.CommandArguments())
@@ -226,7 +220,7 @@ func (j *StatsNotifyJob) getClientUsage(id string) string {
 	traffic , err := j.inboundService.GetClientTrafficById(id)
 	if err != nil {
 		logger.Warning(err)
-		return "something wrong!"
+		return "⚠️ در ورود اطلاعات اشتباهی رخ داده است"
 	}
 	expiryTime := ""
 	if traffic.ExpiryTime == 0 {
@@ -240,7 +234,7 @@ func (j *StatsNotifyJob) getClientUsage(id string) string {
 	} else {
 		total = fmt.Sprintf("%s", common.FormatTraffic((traffic.Total)))
 	}
-	output := fmt.Sprintf("💡 Active: %t\r\n📧 Email: %s\r\n🔼 Upload↑: %s\r\n🔽 Download↓: %s\r\n🔄 Total: %s / %s\r\n📅 Expire in: %s\r\n",
+	output := fmt.Sprintf("♻️ وضعیت فیلترشکن شما : %t\r\n📧 ایمیل ثبت شده : %s\r\n🔼 میزان آپلود ↑ : %s\r\n🔽 میزان دانلود ↓: %s\r\n🔄 حجم کلی : %s / %s\r\n📅 تاریخ اتمام : %",
 	traffic.Enable, traffic.Email, common.FormatTraffic(traffic.Up), common.FormatTraffic(traffic.Down), common.FormatTraffic((traffic.Up + traffic.Down)),
 	total, expiryTime)
 	
